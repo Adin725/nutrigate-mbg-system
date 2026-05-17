@@ -25,15 +25,15 @@ flowchart LR
 
     subgraph "Laravel Framework"
         direction TB
-        Controller["⚙️ Controller\n(Logika Bisnis & Kalkulasi)"]
-        Model["🗃️ Model\n(Eloquent ORM)"]
-        View["🖥️ View\n(Blade, Tailwind, AlpineJS)"]
+        Controller["Controller\n(Logika Bisnis & Kalkulasi)"]
+        Model["Model\n(Eloquent ORM)"]
+        View["View\n(Blade, Tailwind, AlpineJS)"]
 
         Controller -->|"Validasi & Panggil Data"| Model
         Controller -->|"Kirim Data Terolah"| View
     end
 
-    Model <-->|"Eksekusi Query SQL"| DB[("💾 Database MySQL")]
+    Model <-->|"Eksekusi Query SQL"| DB[("Database MySQL")]
 ```
 
 ### Pemetaan Detail Komponen MVC

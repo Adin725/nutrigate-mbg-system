@@ -9,41 +9,57 @@
 
 <br>
 
-NutriGate adalah sistem informasi logistik berbasis web yang dibangun secara khusus untuk mengawal jalannya program Makan Bergizi Gratis (MBG). Sistem ini dirancang untuk mendata sekolah penerima, mencatat setiap jadwal pengiriman makanan, hingga menghitung secara otomatis berapa banyak kandungan protein yang disalurkan setiap harinya.
+NutriGate adalah sistem informasi logistik berbasis web yang dikembangkan khusus untuk mengelola jalur distribusi program Makan Bergizi Gratis (MBG). Sistem ini berfungsi untuk mendata sekolah penerima, mencatat jadwal pengiriman makanan harian, hingga melakukan perhitungan otomatis terhadap total serapan protein yang disalurkan di lapangan.
 
-Pengembangan aplikasi ini menggunakan framework Laravel dengan tujuan utama memastikan data distribusi tetap terpusat, mudah dilacak, dan meminimalisir kesalahan perhitungan gizi di lapangan.
+Aplikasi ini dibangun menggunakan framework Laravel dengan fokus pada sentralisasi data, kemudahan pelacakan logistik, dan akurasi kalkulasi gizi guna meminimalisir kesalahan perhitungan manual.
 
 ---
 
-## Arsitektur Aplikasi (Konsep MVC)
+## Arsitektur Aplikasi (Pola MVC)
 
-Untuk menjaga agar kode tetap rapi dan mudah dikembangkan ke depannya, proyek ini sepenuhnya menerapkan pola desain **Model-View-Controller (MVC)**. Secara garis besar, alur kerja aplikasinya berjalan seperti pada diagram berikut:
+Untuk menjaga kualitas dan skalabilitas kode, proyek ini memisahkan logika aplikasi ke dalam arsitektur **Model-View-Controller (MVC)**. Berikut adalah alur komunikasi antar komponen (*Request Lifecycle*) yang disajikan menggunakan standar PlantUML:
 
-```mermaid
-graph TD
-    Client["Pengguna (Browser)"] -->|"1. Mengirim Request"| C["⚙️ CONTROLLER (MbgDistributionController)"]
-    
-    subgraph "Sistem Inti Laravel"
-        C -->|"2. Meminta Data & Instruksi"| M["🗃️ MODEL (School, MbgMenu, MbgDistribution)"]
-        M -->|"4. Mengembalikan Hasil"| C
-        C -->|"5. Mengirim Data Siap Tampil"| V["🖥️ VIEW (mbg_dashboard.blade.php)"]
-    end
-    
-    M <-->|"3. Eksekusi Query"| DB[("💾 Database (MySQL)")]
-    V -->|"6. Menampilkan Halaman Web"| Client
+```plantuml
+@startuml
+skinparam defaultFontName Arial
+skinparam node {
+    BackgroundColor #F8FAFC
+    BorderColor #3B82F6
+}
+skinparam arrowColor #475569
+
+actor "Pengguna (Browser)" as Client
+
+node "Laravel Application" {
+    [🖥️ VIEW\n(mbg_dashboard.blade.php)] as View
+    [⚙️ CONTROLLER\n(MbgDistributionController)] as Controller
+    [🗃️ MODEL\n(School, MbgMenu, MbgDistribution)] as Model
+}
+
+database "💾 Database\n(MySQL)" as DB
+
+Client --> Controller : "1. Request (Simpan/Tampil Data)"
+Controller --> Model : "2. Panggil Data & Kalkulasi"
+Model <--> DB : "3. Query Eksekusi (Eloquent)"
+Model --> Controller : "4. Kembalikan Hasil Query"
+Controller --> View : "5. Passing Data ke Template"
+View --> Client : "6. Render Halaman Antarmuka"
+@enduml
 ```
 
-### Detail Tugas Masing-Masing Komponen
+### Pemetaan Detail Komponen MVC
 
-Setiap bagian dalam konsep MVC di atas memiliki peran spesifik agar kode tidak menumpuk di satu tempat:
+Pemisahan tugas ini mencegah penumpukan kode pada satu *layer* (lapisan). Penjelasan tugas spesifik untuk setiap komponen dirangkum pada tabel berikut:
 
-* **Model (Pengelola Data):** Bertugas mengatur segala urusan dengan database. Model di aplikasi ini menggunakan fitur Eloquent ORM dari Laravel untuk mengatur hubungan antar data, misalnya mencocokkan data sekolah dengan paket menu yang akan dikirim.
-* **Controller (Otak Aplikasi):** Bagian ini adalah pusat kendali. Saat ada jadwal pengiriman baru yang diinput, Controller yang akan memproses hitung-hitungannya (seperti mengalikan jumlah murid dengan kandungan protein) sebelum akhirnya menyimpannya ke database.
-* **View (Tampilan Visual):** Murni berfungsi untuk menampilkan data ke layar pengguna. Antarmuka ini dibangun menggunakan *engine* Blade dari Laravel, dipercantik dengan Tailwind CSS, dan diberi efek interaktif (seperti *pop-up* form) menggunakan Alpine.js.
+| Komponen (Layer) | Letak Direktori Utama | Peran & Tanggung Jawab Operasional |
+| :--- | :--- | :--- |
+| **Model** (Data) | `app/Models/` | Bertugas menangani komunikasi langsung dengan database. Layer ini menggunakan Eloquent ORM untuk mendefinisikan struktur tabel, menjaga relasi antar data (misal: relasi tabel `School` dan `MbgMenu`), serta mengeksekusi operasi baca-tulis ke MySQL. |
+| **Controller** (Logika) | `app/Http/Controllers/` | Bertindak sebagai otak aplikasi yang menjembatani View dan Model. Controller ini menangani validasi *form* dari user, menjalankan logika matematika (seperti perkalian otomatis jumlah murid dengan gram protein), dan menentukan respons apa yang akan dikirim kembali. |
+| **View** (Antarmuka) | `resources/views/` | Lapisan terluar yang murni digunakan untuk menampilkan *User Interface* (UI). Dibangun dengan sistem *templating* Blade, dikombinasikan dengan Tailwind CSS untuk pengaturan tata letak, dan Alpine.js untuk interaksi komponen *pop-up* tanpa memuat ulang halaman. |
 
-### Struktur Direktori Folder
+### Struktur Folder Inti
 
-Sebagai gambaran letak file-file penting yang menyusun aplikasi ini, berikut adalah peta struktur direktorinya:
+Peta letak file utama pembentuk aplikasi:
 
 ```text
 📦 nutrigate-mbg-system
@@ -59,90 +75,112 @@ Sebagai gambaran letak file-file penting yang menyusun aplikasi ini, berikut ada
  ┃ ┗ 📂 views
  ┃   ┗ 📜 mbg_dashboard.blade.php           # (VIEW) Kode antarmuka halaman utama admin
  ┗ 📂 database
-   ┗ 📜 nutrigate_db.sql                    # File mentahan database untuk di-import
+   ┗ 📜 nutrigate_db.sql                    # File dump database untuk instalasi cepat
 ```
 
 ---
 
 ## Skema Relasi Database (ERD)
 
-Aplikasi ini ditopang oleh tiga tabel utama yang saling berhubungan. Berikut adalah visualisasi *Entity-Relationship Diagram* yang menunjukkan bagaimana data-data logistik tersebut saling mengikat dan merepresentasikan kolom aslinya di database:
+Struktur data aplikasi ini ditopang oleh tiga entitas utama. Berikut adalah pemetaan *Entity-Relationship Diagram* menggunakan PlantUML dengan garis relasi *orthogonal* agar terstruktur rapi dan tidak tumpang tindih:
 
-```mermaid
-erDiagram
-    SCHOOL ||--o{ MBG_DISTRIBUTION : "Menerima pengiriman"
-    MBG_MENU ||--o{ MBG_DISTRIBUTION : "Dikirim sebagai menu"
-    
-    SCHOOL {
-        bigint id PK
-        string school_name
-        int total_students
-        string district
-    }
-    MBG_MENU {
-        bigint id PK
-        string menu_package
-        int calories
-        float protein
-        string status_gizi
-    }
-    MBG_DISTRIBUTION {
-        bigint id PK
-        bigint school_id FK
-        bigint mbg_menu_id FK
-        date delivery_date
-        int total_boxes_sent
-        string delivery_status
-    }
+```plantuml
+@startuml
+skinparam linetype ortho
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #64748B
+    ArrowColor #334155
+}
+
+entity "SCHOOL" as school {
+  * id : bigint <<PK>>
+  --
+  name : varchar
+  student_count : int
+  address : text
+}
+
+entity "MBG_MENU" as menu {
+  * id : bigint <<PK>>
+  --
+  menu_name : varchar
+  protein_content : float
+}
+
+entity "MBG_DISTRIBUTION" as dist {
+  * id : bigint <<PK>>
+  --
+  * school_id : bigint <<FK>>
+  * mbg_menu_id : bigint <<FK>>
+  delivery_date : date
+  status : varchar
+}
+
+school ||..o{ dist : "Menerima pengiriman"
+menu ||..o{ dist : "Dikirim sebagai menu"
+@enduml
 ```
 
 ---
 
-## Fitur Unggulan Sistem
+## Fungsionalitas Sistem
 
-1. **Kalkulator Gizi Pintar:** Pengguna tidak perlu lagi menghitung manual. Saat menjadwalkan distribusi, sistem akan otomatis mengalikan jumlah siswa di sekolah tersebut dengan kandungan gizi pada menu yang dipilih. Hasil akhirnya berupa total kebutuhan kotak makan dan total gram protein.
-2. **Dasbor Ringkasan Interaktif:** Terdapat panel metrik utama di bagian atas aplikasi yang langsung merekap total distribusi hari ini, dilengkapi dengan grafik lingkaran (Chart.js) untuk melihat perbandingan status pengiriman.
-3. **Manajemen Logistik Terpadu (CRUD):** Admin bebas melakukan penambahan jadwal baru, mengubah data jika ada kesalahan, menghapus riwayat, serta memperbarui status pengiriman (*Diproses -> Dikirim -> Selesai*) dengan sangat mudah.
-
----
-
-## Panduan Visual (Screenshots)
-
-Berikut ini adalah tampilan antarmuka dari aplikasi NutriGate yang akan dilihat oleh pengguna:
-
-| Dasbor Utama & Visualisasi Grafik |
-| :---: |
-| <img src="public/screenshots/dashboard.png" alt="Dasbor Utama Admin" width="850"> |
-| **Form Penjadwalan & Pengelolaan Data Distribusi** |
-| <img src="public/screenshots/crud-management.png" alt="Tabel Manajemen Distribusi" width="850"> |
-
-> **Catatan:** Pastikan gambar *screenshot* Anda sudah diletakkan di dalam folder `public/screenshots/` dengan nama yang sesuai agar muncul di halaman ini.
+1. **Kalkulator Gizi Otomatis:** Admin tidak perlu lagi melakukan perhitungan manual. Saat proses penjadwalan, sistem akan langsung mengalikan variabel jumlah siswa di sekolah target dengan spesifikasi protein pada paket menu yang dipilih, menghasilkan total kebutuhan kotak makan dan gram protein secara *real-time*.
+2. **Dasbor Analitik & Metrik:** Panel kontrol utama menampilkan ringkasan rekapitulasi data distribusi harian. Dilengkapi integrasi Chart.js untuk memvisualisasikan proporsi status pengiriman dalam bentuk grafik.
+3. **Pendaftaran Entitas Sekolah:** Modul khusus yang memungkinkan penambahan data instansi sekolah baru ke dalam jaringan distribusi, lengkap dengan penetapan kuota siswa aktif.
+4. **Manajemen Katalog Menu:** Fasilitas untuk menginput daftar variasi menu makanan baru beserta komposisi lauk dan takaran gizi (protein) untuk rotasi pengiriman harian.
+5. **Siklus Status Pengiriman (CRUD):** Kemampuan untuk mencatat jadwal distribusi baru, mengedit kesalahan input, menghapus riwayat, serta memperbarui progres pengiriman secara berjenjang (*Diproses -> Dikirim -> Selesai*).
 
 ---
 
-## Cara Menjalankan Aplikasi di Laptop (Localhost)
+## Dokumentasi Antarmuka (Screenshots)
 
-Bagi dosen atau asisten laboratorium yang ingin menguji coba sistem ini, silakan ikuti langkah-langkah instalasi berikut. Pastikan laptop sudah terinstal **PHP (minimal versi 8.2)**, **Composer**, dan aplikasi penyedia database seperti **XAMPP** atau **Laragon**.
+Tampilan antarmuka panel logistik NutriGate:
 
-### 1. Persiapan Awal
-Buka terminal atau *command prompt*, lalu unduh repositori ini dan masuk ke dalam foldernya:
+### 1. Dasbor Utama & Visualisasi Analitik Data
+Pusat pemantauan distribusi yang menampilkan metrik protein harian dan grafik status pengiriman logistik.
+<p align="center">
+  <img src="public/screenshots/dashboard.png" alt="Dasbor Utama Admin" width="90%">
+</p>
+
+### 2. Panel Pendaftaran Sekolah Mitra Baru
+Antarmuka untuk menginput data sekolah penerima baru, mencakup penetapan alamat dan jumlah siswa sebagai basis penentu kuota makanan.
+<p align="center">
+  <img src="public/screenshots/add_school.png" alt="Form Tambah Sekolah Baru" width="90%">
+</p>
+
+### 3. Modul Penyusunan Katalog Menu Gizi
+Formulir untuk mendaftarkan variasi menu makanan baru beserta perhitungan besaran protein per porsinya.
+<p align="center">
+  <img src="public/screenshots/add_menu.png" alt="Form Tambah Menu Baru" width="90%">
+</p>
+
+---
+
+## Panduan Instalasi Lokal (Localhost Development)
+
+Panduan berikut digunakan jika Anda ingin menjalankan dan menguji proyek ini di laptop. Syarat utama yang perlu disiapkan adalah **PHP (versi 8.2 ke atas)**, **Composer**, dan aplikasi penyedia database lokal seperti **XAMPP** atau **Laragon**.
+
+### 1. Kloning Repositori
+Buka terminal direktori kerja Anda, lalu jalankan perintah ini untuk mengunduh source code:
 ```bash
-git clone https://github.com/Adin725/nutrigate-mbg-system.git
+git clone [https://github.com/Adin725/nutrigate-mbg-system.git](https://github.com/Adin725/nutrigate-mbg-system.git)
 cd nutrigate-mbg-system
 ```
 
-### 2. Instalasi Kebutuhan Sistem
-Jalankan perintah ini untuk menginstal semua *library* pendukung yang dibutuhkan oleh Laravel:
+### 2. Instalasi Dependensi
+Unduh dan pasang seluruh *library* PHP yang dibutuhkan Laravel melalui Composer:
 ```bash
 composer install
 ```
 
-### 3. Pengaturan Database
-Gandakan file konfigurasi bawaan agar aplikasi bisa terhubung ke database lokal Anda:
+### 3. Konfigurasi Database
+Buat salinan file pengaturan lingkungan (environment) aplikasi:
 ```bash
 cp .env.example .env
 ```
-Buka file `.env` yang baru saja terbuat, cari bagian pengaturan database, dan ubah menjadi seperti ini:
+Buka file `.env` tersebut, temukan blok database, dan sesuaikan dengan kredensial MySQL lokal Anda:
 ```ini
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -152,32 +190,32 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-### 4. Membuat Kunci Keamanan
-Jalankan perintah ini agar Laravel menghasilkan kunci enkripsi unik untuk keamanan data:
+### 4. *Generate Application Key*
+Buat kunci enkripsi unik untuk mengamankan *session* dan data aplikasi:
 ```bash
 php artisan key:generate
 ```
 
-### 5. Membangun Tabel Database
-Pastikan MySQL Anda (di XAMPP/Laragon) sudah menyala. Jalankan perintah di bawah ini untuk membuat tabel otomatis sekaligus mengisi data contoh (data *dummy*):
+### 5. Migrasi dan Injeksi Data Uji (*Seeding*)
+Pastikan service MySQL Anda sudah berjalan. Eksekusi perintah ini untuk membuat seluruh tabel yang dibutuhkan secara otomatis sekaligus mengisi data contoh awal:
 ```bash
 php artisan migrate:fresh --seed
 ```
-*(Sebagai alternatif, Anda juga bisa melakukan import file `nutrigate_db.sql` secara manual melalui phpMyAdmin).*
+*(Catatan alternatif: Anda bisa langsung mengimpor file mentahan `nutrigate_db.sql` melalui phpMyAdmin ke dalam database kosong jika tidak ingin menjalankan perintah migrate).*
 
-### 6. Menyalakan Server
-Tahap terakhir, nyalakan server lokal Laravel dengan perintah:
+### 6. Menjalankan Server Lokal
+Aktifkan *development server* Laravel dengan perintah:
 ```bash
 php artisan serve
 ```
-Buka browser Anda dan kunjungi tautan `http://127.0.0.1:8000` untuk melihat aplikasi NutriGate beraksi.
+Aplikasi sudah siap digunakan. Buka browser dan akses halaman `http://127.0.0.1:8000`.
 
 ---
 
 ## Profil Pengembang
 
-Proyek ini disusun dan dikembangkan sebagai bagian dari pemenuhan tugas mata kuliah Pemrograman Web:
+Dokumentasi dan proyek aplikasi ini dikembangkan untuk keperluan implementasi arsitektur pemrograman web:
 
 * **Rijaluddin Abdul Ghani**
-* Mahasiswa Program Studi Informatika, Fakultas MIPA, Universitas Syiah Kuala.
+* Mahasiswa Program Studi Informatika, Universitas Syiah Kuala.
 * GitHub: [@Adin725](https://github.com/Adin725)

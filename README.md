@@ -192,7 +192,7 @@ Aplikasi berhasil dijalankan dan dapat diakses melalui browser pada alamat `http
 
 ## Profil Pengembang
 
-Aplikasi ini dikembangkan untuk keperluan implementasi tugas perancangan web tingkat lanjut:
+Program ini dikembangkan untuk memenuhi tugas Pemrograman Berbasis Web:
 
 * **Rijaluddin Abdul Ghani**
 * Mahasiswa Program Studi Informatika, Universitas Syiah Kuala.

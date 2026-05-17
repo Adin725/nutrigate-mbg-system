@@ -46,28 +46,23 @@ Pemisahan tugas ini memastikan kode tidak menumpuk di satu tempat. Penjelasan tu
 | **Controller** | `app/Http/Controllers/` | Bertindak sebagai pusat kendali. Menerima input dari pengguna, memproses perhitungan otomatis (misal: jumlah siswa dikali kandungan protein), lalu menentukan data mana yang akan dikirim ke antarmuka. |
 | **View** | `resources/views/` | Lapisan presentasi yang menyajikan antarmuka pengguna (UI). Dibangun menggunakan *template engine* Blade, dirapikan dengan Tailwind CSS, dan menggunakan Alpine.js untuk interaktivitas elemen dinamis seperti modal form. |
 
-### Struktur Direktori Inti
+📦 nutrigate-mbg-system
+ ┣ 📂 app
+ ┃ ┣ 📂 Http
+ ┃ ┃ ┗ 📂 Controllers
+ ┃ ┃   ┗ 📜 MbgDistributionController.php   # (CONTROLLER) Pusat logika dan kalkulasi data
+ ┃ ┗ 📂 Models
+ ┃   ┣ 📜 MbgDistribution.php               # (MODEL) Skema tabel jadwal distribusi
+ ┃   ┣ 📜 MbgMenu.php                       # (MODEL) Skema tabel katalog menu gizi
+ ┃   ┗ 📜 School.php                        # (MODEL) Skema tabel data sekolah mitra
+ ┣ 📂 database
+ ┃ ┣ 📂 migrations                           # Skema pembuatan tabel database
+ ┃ ┗ 📂 seeders                              # Data dummy awal untuk pengujian
+ ┣ 📂 resources
+ ┃ ┗ 📂 views
+ ┃   ┗ 📜 mbg_dashboard.blade.php           # (VIEW) Kode antarmuka halaman utama admin
+ ┗ 📜 nutrigate_db.sql                      # File backup database (SQL Dump) di root project
 
-Peta letak file utama yang menyusun aplikasi:
-
-```text
-nutrigate-mbg-system
- ┣ app
- ┃ ┣ Http
- ┃ ┃ ┗ Controllers
- ┃ ┃   ┗ MbgDistributionController.php   # (CONTROLLER) Pusat pemrosesan data
- ┃ ┗ Models
- ┃   ┣ MbgDistribution.php               # (MODEL) Representasi tabel distribusi logistik
- ┃   ┣ MbgMenu.php                       # (MODEL) Representasi tabel menu makanan
- ┃   ┗ School.php                        # (MODEL) Representasi tabel sekolah mitra
- ┣ resources
- ┃ ┗ views
- ┃   ┗ mbg_dashboard.blade.php           # (VIEW) Template antarmuka dasbor utama admin
- ┗ database
-   ┗ nutrigate_db.sql                    # File dump database untuk instalasi cepat
-```
-
----
 
 ## Skema Relasi Database (ERD)
 

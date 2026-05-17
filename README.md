@@ -26,14 +26,14 @@ flowchart LR
     subgraph "Laravel Framework"
         direction TB
         Controller["⚙️ Controller\n(Logika Bisnis & Kalkulasi)"]
-        Model["Model\n(Eloquent ORM)"]
-        View["View\n(Blade, Tailwind, AlpineJS)"]
+        Model["🗃️ Model\n(Eloquent ORM)"]
+        View["🖥️ View\n(Blade, Tailwind, AlpineJS)"]
 
         Controller -->|"Validasi & Panggil Data"| Model
         Controller -->|"Kirim Data Terolah"| View
     end
 
-    Model <-->|"Eksekusi Query SQL"| DB[("Database MySQL")]
+    Model <-->|"Eksekusi Query SQL"| DB[("💾 Database MySQL")]
 ```
 
 ### Pemetaan Detail Komponen MVC
@@ -46,23 +46,30 @@ Pemisahan tugas ini memastikan kode tidak menumpuk di satu tempat. Penjelasan tu
 | **Controller** | `app/Http/Controllers/` | Bertindak sebagai pusat kendali. Menerima input dari pengguna, memproses perhitungan otomatis (misal: jumlah siswa dikali kandungan protein), lalu menentukan data mana yang akan dikirim ke antarmuka. |
 | **View** | `resources/views/` | Lapisan presentasi yang menyajikan antarmuka pengguna (UI). Dibangun menggunakan *template engine* Blade, dirapikan dengan Tailwind CSS, dan menggunakan Alpine.js untuk interaktivitas elemen dinamis seperti modal form. |
 
-📦 nutrigate-mbg-system
- ┣ 📂 app
- ┃ ┣ 📂 Http
- ┃ ┃ ┗ 📂 Controllers
- ┃ ┃   ┗ 📜 MbgDistributionController.php   # (CONTROLLER) Pusat logika dan kalkulasi data
- ┃ ┗ 📂 Models
- ┃   ┣ 📜 MbgDistribution.php               # (MODEL) Skema tabel jadwal distribusi
- ┃   ┣ 📜 MbgMenu.php                       # (MODEL) Skema tabel katalog menu gizi
- ┃   ┗ 📜 School.php                        # (MODEL) Skema tabel data sekolah mitra
- ┣ 📂 database
- ┃ ┣ 📂 migrations                           # Skema pembuatan tabel database
- ┃ ┗ 📂 seeders                              # Data dummy awal untuk pengujian
- ┣ 📂 resources
- ┃ ┗ 📂 views
- ┃   ┗ 📜 mbg_dashboard.blade.php           # (VIEW) Kode antarmuka halaman utama admin
- ┗ 📜 nutrigate_db.sql                      # File backup database (SQL Dump) di root project
+### Struktur Direktori Inti
 
+Peta letak file utama yang menyusun aplikasi beserta manajemen basis datanya:
+
+```text
+nutrigate-mbg-system/
+ ├── app/
+ │   ├── Http/
+ │   │   └── Controllers/
+ │   │       └── MbgDistributionController.php   # (CONTROLLER) Pusat pemrosesan data dan logika
+ │   └── Models/
+ │       ├── MbgDistribution.php                 # (MODEL) Representasi tabel distribusi logistik
+ │       ├── MbgMenu.php                         # (MODEL) Representasi tabel menu makanan
+ │       └── School.php                          # (MODEL) Representasi tabel sekolah mitra
+ ├── database/
+ │   ├── migrations/                             # Skema pembuatan struktur tabel database
+ │   └── seeders/                                # Data dummy awal untuk otomatisasi pengujian
+ ├── resources/
+ │   └── views/
+ │       └── mbg_dashboard.blade.php             # (VIEW) Template antarmuka dasbor utama admin
+ └── nutrigate_db.sql                            # File backup database (SQL Dump) untuk instalasi manual
+```
+
+---
 
 ## Skema Relasi Database (ERD)
 
@@ -172,7 +179,7 @@ Pastikan service MySQL di lokal Anda telah berjalan. Eksekusi perintah berikut u
 ```bash
 php artisan migrate:fresh --seed
 ```
-*(Alternatif: Anda dapat mengimpor file `nutrigate_db.sql` secara manual melalui antarmuka phpMyAdmin jika tidak menggunakan fitur migrate).*
+*(Alternatif: Anda dapat mengimpor file `nutrigate_db.sql` yang berada di direktori utama secara manual melalui antarmuka phpMyAdmin jika tidak menggunakan fitur migrate).*
 
 ### 6. Menjalankan Server Lokal
 Nyalakan *development server* bawaan Laravel:

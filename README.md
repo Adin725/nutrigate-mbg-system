@@ -26,14 +26,14 @@ flowchart LR
     subgraph "Laravel Framework"
         direction TB
         Controller["⚙️ Controller\n(Logika Bisnis & Kalkulasi)"]
-        Model["🗃️ Model\n(Eloquent ORM)"]
-        View["🖥️ View\n(Blade, Tailwind, AlpineJS)"]
+        Model["Model\n(Eloquent ORM)"]
+        View["View\n(Blade, Tailwind, AlpineJS)"]
 
         Controller -->|"Validasi & Panggil Data"| Model
         Controller -->|"Kirim Data Terolah"| View
     end
 
-    Model <-->|"Eksekusi Query SQL"| DB[("💾 Database MySQL")]
+    Model <-->|"Eksekusi Query SQL"| DB[("Database MySQL")]
 ```
 
 ### Pemetaan Detail Komponen MVC
@@ -51,20 +51,20 @@ Pemisahan tugas ini memastikan kode tidak menumpuk di satu tempat. Penjelasan tu
 Peta letak file utama yang menyusun aplikasi:
 
 ```text
-📦 nutrigate-mbg-system
- ┣ 📂 app
- ┃ ┣ 📂 Http
- ┃ ┃ ┗ 📂 Controllers
- ┃ ┃   ┗ 📜 MbgDistributionController.php   # (CONTROLLER) Pusat pemrosesan data
- ┃ ┗ 📂 Models
- ┃   ┣ 📜 MbgDistribution.php               # (MODEL) Representasi tabel distribusi logistik
- ┃   ┣ 📜 MbgMenu.php                       # (MODEL) Representasi tabel menu makanan
- ┃   ┗ 📜 School.php                        # (MODEL) Representasi tabel sekolah mitra
- ┣ 📂 resources
- ┃ ┗ 📂 views
- ┃   ┗ 📜 mbg_dashboard.blade.php           # (VIEW) Template antarmuka dasbor utama admin
- ┗ 📂 database
-   ┗ 📜 nutrigate_db.sql                    # File dump database untuk instalasi cepat
+nutrigate-mbg-system
+ ┣ app
+ ┃ ┣ Http
+ ┃ ┃ ┗ Controllers
+ ┃ ┃   ┗ MbgDistributionController.php   # (CONTROLLER) Pusat pemrosesan data
+ ┃ ┗ Models
+ ┃   ┣ MbgDistribution.php               # (MODEL) Representasi tabel distribusi logistik
+ ┃   ┣ MbgMenu.php                       # (MODEL) Representasi tabel menu makanan
+ ┃   ┗ School.php                        # (MODEL) Representasi tabel sekolah mitra
+ ┣ resources
+ ┃ ┗ views
+ ┃   ┗ mbg_dashboard.blade.php           # (VIEW) Template antarmuka dasbor utama admin
+ ┗ database
+   ┗ nutrigate_db.sql                    # File dump database untuk instalasi cepat
 ```
 
 ---

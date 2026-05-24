@@ -12,3 +12,13 @@ Route::delete('/school/{id}', [MbgDistributionController::class, 'destroySchool'
 
 Route::post('/menu', [MbgDistributionController::class, 'storeMenu'])->name('menu.store');
 Route::delete('/menu/{id}', [MbgDistributionController::class, 'destroyMenu'])->name('menu.destroy');
+
+// --- Edit Routes ---
+Route::get('/distribution/{id}/edit', [MbgDistributionController::class, 'edit'])->name('mbg.edit');
+Route::put('/distribution/{id}', [MbgDistributionController::class, 'update'])->name('mbg.update');
+
+Route::get('/school/{id}/edit', [MbgDistributionController::class, 'editSchool'])->name('school.edit');
+Route::put('/school/{id}', [MbgDistributionController::class, 'updateSchool'])->name('school.update');
+
+Route::get('/menu/{id}/edit', [MbgDistributionController::class, 'editMenu'])->name('menu.edit');
+Route::put('/menu/{id}', [MbgDistributionController::class, 'updateMenu'])->name('menu.update');

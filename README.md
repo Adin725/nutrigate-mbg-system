@@ -51,7 +51,6 @@ Pemisahan tugas ini memastikan kode tidak menumpuk di satu tempat. Penjelasan tu
 Peta letak file utama yang menyusun aplikasi beserta manajemen basis datanya:
 
 ```text
-<<<<<<< HEAD
 nutrigate-mbg-system/
  ├── app/
  │   ├── Http/

@@ -336,12 +336,18 @@
 
                     <!-- Table Logistik -->
                     <div class="glass-panel overflow-hidden flex flex-col bg-white lg:col-span-2">
-                        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-white">
+                        <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between bg-white gap-4">
                             <h2 class="text-base font-bold text-slate-800">Tracking Logistik Berjalan</h2>
-                            <button
-                                class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
-                                Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </button>
+                            
+                            <!-- FORM PENCARIAN (where & find) -->
+                            <form action="{{ route('mbg.index') }}" method="GET" class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                                <input type="text" name="school" placeholder="Cari nama sekolah..." value="{{ request('school') }}" class="premium-input px-3 py-1.5 text-sm w-full sm:w-48" autocomplete="off">
+                                <input type="number" name="dist_id" placeholder="Cari ID Dist..." value="{{ request('dist_id') }}" class="premium-input px-3 py-1.5 text-sm w-full sm:w-32" autocomplete="off" title="Pencarian spesifik menggunakan find()">
+                                <button type="submit" class="btn-primary px-4 py-1.5 text-sm whitespace-nowrap"><i data-lucide="search" class="w-4 h-4 inline-block mr-1"></i> Cari</button>
+                                @if(request('school') || request('dist_id'))
+                                    <a href="{{ route('mbg.index') }}" class="btn-danger px-4 py-1.5 text-sm rounded-lg flex items-center justify-center whitespace-nowrap" title="Reset">Reset</a>
+                                @endif
+                            </form>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left whitespace-nowrap">
@@ -442,14 +448,19 @@
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 text-center">
-                                                <form action="{{ route('mbg.destroy', $dist->id) }}" method="POST"
-                                                    onsubmit="return confirm('Apakah Anda yakin ingin membatalkan dan menghapus jadwal ini?');">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="btn-danger p-2 rounded-lg"
-                                                        title="Hapus Jadwal">
-                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                                    </button>
-                                                </form>
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="{{ route('mbg.edit', $dist->id) }}" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Edit Jadwal">
+                                                        <i data-lucide="edit" class="w-4 h-4"></i>
+                                                    </a>
+                                                    <form action="{{ route('mbg.destroy', $dist->id) }}" method="POST"
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin membatalkan dan menghapus jadwal ini?');">
+                                                        @csrf @method('DELETE')
+                                                        <button type="submit" class="btn-danger p-2 rounded-lg"
+                                                            title="Hapus Jadwal">
+                                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -542,13 +553,18 @@
                                                 class="text-xs font-medium text-slate-500 uppercase">Siswa</span></span>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <form action="{{ route('school.destroy', $school->id) }}" method="POST"
-                                            onsubmit="return confirm('Hapus data sekolah ini secara permanen?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="btn-danger p-2 rounded-lg" title="Hapus">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        </form>
+                                        <div class="flex items-center justify-center gap-2">
+                                            <a href="{{ route('school.edit', $school->id) }}" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Edit Data">
+                                                <i data-lucide="edit" class="w-4 h-4"></i>
+                                            </a>
+                                            <form action="{{ route('school.destroy', $school->id) }}" method="POST"
+                                                onsubmit="return confirm('Hapus data sekolah ini secara permanen?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn-danger p-2 rounded-lg" title="Hapus">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -615,13 +631,18 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <form action="{{ route('menu.destroy', $menu->id) }}" method="POST"
-                                            onsubmit="return confirm('Hapus master menu ini?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="btn-danger p-2 rounded-lg">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        </form>
+                                        <div class="flex items-center justify-center gap-2">
+                                            <a href="{{ route('menu.edit', $menu->id) }}" class="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Edit Menu">
+                                                <i data-lucide="edit" class="w-4 h-4"></i>
+                                            </a>
+                                            <form action="{{ route('menu.destroy', $menu->id) }}" method="POST"
+                                                onsubmit="return confirm('Hapus master menu ini?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn-danger p-2 rounded-lg">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

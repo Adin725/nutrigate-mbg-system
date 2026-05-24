@@ -51,6 +51,7 @@ Pemisahan tugas ini memastikan kode tidak menumpuk di satu tempat. Penjelasan tu
 Peta letak file utama yang menyusun aplikasi beserta manajemen basis datanya:
 
 ```text
+<<<<<<< HEAD
 nutrigate-mbg-system/
  ├── app/
  │   ├── Http/
@@ -67,6 +68,24 @@ nutrigate-mbg-system/
  │   └── views/
  │       └── mbg_dashboard.blade.php             # (VIEW) Template antarmuka dasbor utama admin
  └── nutrigate_db.sql                            # File backup database (SQL Dump) untuk instalasi manual
+=======
+📦 nutrigate-mbg-system
+ ┣ 📂 app
+ ┃ ┣ 📂 Http
+ ┃ ┃ ┗ 📂 Controllers
+ ┃ ┃   ┗ 📜 MbgDistributionController.php   # (CONTROLLER) Pusat logika dan kalkulasi data
+ ┃ ┗ 📂 Models
+ ┃   ┣ 📜 MbgDistribution.php               # (MODEL) Skema tabel jadwal distribusi
+ ┃   ┣ 📜 MbgMenu.php                       # (MODEL) Skema tabel katalog menu gizi
+ ┃   ┗ 📜 School.php                        # (MODEL) Skema tabel data sekolah mitra
+ ┣ 📂 database
+ ┃ ┣ 📂 migrations                           # Skema pembuatan tabel database
+ ┃ ┗ 📂 seeders                              # Data dummy awal untuk pengujian
+ ┣ 📂 resources
+ ┃ ┗ 📂 views
+ ┃   ┗ 📜 mbg_dashboard.blade.php           # (VIEW) Kode antarmuka halaman utama admin
+ ┗ 📜 nutrigate_db.sql                      # File backup database (SQL Dump) di root project
+>>>>>>> 679ceca (dokumen: pembaruan akhir README.md)
 ```
 
 ---
